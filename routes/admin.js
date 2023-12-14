@@ -68,13 +68,22 @@ router.post('/create',function(req,res){
   
 })
 router.get('/edit/:id',verifyLogin,(req,res)=>{
+  if(req.session.updateError){
+    var msg=req.session.updateErrmsg
+    req.session.updateError=false
+    req.session.updateErrmsg=""
+  }
   adminhelper.findUser(req.params.id).then((user)=>{
-    res.render('admin/editboard',{user,admin:true})
+    res.render('admin/editboard',{user,admin:true,error:msg})
   })
 })
 router.post('/update',(req,res)=>{
   adminhelper.updateUser(req.body).then(()=>{
     res.redirect('/admin/dashboard')
+  }).catch((msg)=>{
+    req.session.updateError=true
+    req.session.updateErrmsg=msg
+    res.redirect(`/admin/edit/${req.body.id}`)
   })
 })
 router.get('/delete',verifyLogin,(req,res)=>{

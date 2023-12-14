@@ -43,8 +43,14 @@ var updateUser=(data)=>{
     return new Promise((resolve, reject) => {
         db.get().collection('user').updateOne({_id: new ObjectId(data.id)},{$set:{name: data.name, email: data.email}}).then((result)=>{
             console.log(result);
-                resolve(result)
+                resolve()
 
+        }).catch((err)=>{
+            if(err.code===11000){
+                reject("email is already registered")
+            }else{
+                reject("error")
+            }
         })
     })
 }
