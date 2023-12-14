@@ -1,0 +1,38 @@
+<section class=" container-fluid">
+  <div class="mr-4">
+    <div class="d-flex justify-content-end ">
+      <a class="btn btn-success m-5" href="/admin/create">Create</a>
+    </div>
+     <div class="table-responsive">
+
+    <table id="userTable" class="table table-hover border border-success table-fixed" style="table-layout:fixed">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Password</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each users}}
+        <tr>
+          <th scope="row"></th>
+          <td class="w-25">{{this.name}}</td>
+          <td class="w-25">{{this.email}}</td>
+          <td class="w-25">{{this.password}}</td>
+          <td class="d-flex">
+            <div>
+              <a class="btn btn-primary" href="/admin/edit/{{_id}}">Edit</a>
+              <a class="btn btn-danger" href="/admin/delete?id={{_id}}"onclick="return confirm('Are you sure you want to delete it?')">Delete</a>
+            </div>
+          </td>
+        </tr>
+        {{/each}}
+
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>

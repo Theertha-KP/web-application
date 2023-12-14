@@ -1,0 +1,31 @@
+body {
+  /* padding: 50px; */
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-size: 2rem!important;
+
+}
+
+a {
+  color: #00B7FF;
+}
+.form-control{
+  height: 38px !important;
+  font-size: 2rem !important;
+}
+.btn{
+  height:44px !important;
+  font-size: 2rem !important;
+}
+.table td{
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  
+}
+#navbar{
+  justify-content: end;
+}
+.navbar-brand {
+ 
+  font-size: 3.25rem !important;
+
+}
