@@ -32,7 +32,7 @@ router.get('/signup', function(req, res, next) {
 router.post('/signup',function(req,res) {
   console.log(req.body);
   userhelper.signup(req.body).then(()=>{
-    res.redirect('/login')
+    res.json({success:true})
   }).catch((msg)=>{
     req.session.signupError=true
     req.session.errmsg=msg
