@@ -1,6 +1,6 @@
 var express = require('express');
 const { MongoClient } = require('mongodb');
-const userhelper=require('../helpers/userHelper/userHelper')
+const userhelper = require('../helpers/userHelper/userHelper')
 
 var router = express.Router();
 const verifyLogin = (req, res, next) => {
@@ -11,71 +11,94 @@ const verifyLogin = (req, res, next) => {
   }
 }
 
-
-/* GET home page. */
-router.get('/signup', function(req, res, next) {
-    if(req.session.userStatus){
-      res.redirect('/home')
-    }else{
-      if(req.session.signupError){
-       
-        var msg=req.session.errmsg
-        
-      req.session.signupError=false
-      req.session.errmsg=""
+const check = (req) => {
+  return new Promise((resolve, reject) => {
+    userhelper.checkuser(req.session.email).then((result) => {
+      if (result.uservalid) {
+        resolve({ status: true })
       }
+      else {
+        resolve({ status: false })
+      }
+    })
+  })
+}
+/* GET home page. */
+router.get('/signup', function (req, res, next) {
+  if (req.session.userStatus) {
+    res.redirect('/home')
+  } else {
+    if (req.session.signupError) {
+
+      var msg = req.session.errmsg
+
+      req.session.signupError = false
+      req.session.errmsg = ""
     }
-    res.set('Cache-Control', 'no-store')
-  res.render('user/signup',{error:msg});
-    
+  }
+  res.set('Cache-Control', 'no-store')
+  res.render('user/signup', { error: msg });
+
 });
-router.post('/signup',function(req,res) {
+router.post('/signup', function (req, res) {
   console.log(req.body);
-  userhelper.signup(req.body).then(()=>{
-    res.json({success:true})
-  }).catch((msg)=>{
-    req.session.signupError=true
-    req.session.errmsg=msg
+  userhelper.signup(req.body).then(() => {
+    res.json({ success: true })
+  }).catch((msg) => {
+    req.session.signupError = true
+    req.session.errmsg = msg
     res.json({ success: false })
   })
- 
+
 })
-router.get('/login',(req,res)=>{
-  if(req.session.userStatus){
+router.get('/login', (req, res) => {
+  if (req.session.userStatus) {
     res.redirect('/home')
-  }if (req.session.userLoginError) {
+  } if (req.session.userLoginError) {
     var error = "email or password is incorrect"
-   
+
     req.session.userLoginError = false
   }
   res.set('Cache-Control', 'no-store')
-  res.render('user/login',{error});
+  res.render('user/login', { error });
 })
 
 
-router.post('/login',(req,res)=>{
+router.post('/login', (req, res) => {
   console.log(req.body);
- 
-  userhelper.login(req.body).then((result)=>{
+
+  userhelper.login(req.body).then((result) => {
     console.log(result);
-    if(result.success){
-      req.session.user=result.data.name
-      req.session.userStatus=result.success
+    if (result.success) {
+      req.session.user = result.data.name
+      req.session.email=result.data.email
+      req.session.userStatus = result.success
       res.redirect('/home')
     }
     else {
       req.session.userLoginError = true
       res.redirect('/login')
     }
-  
+
   })
 })
-router.get('/home',verifyLogin,(req,res)=>{
-  res.set('Cache-Control', 'no-store')
-  res.render('user/home',{ name: req.session.user })
+router.get('/home', verifyLogin, (req, res) => {
+ // res.set('Cache-Control', 'no-store')
+ console.log("hai");
+  check(req).then((result) => {
+    console.log(result);
+    if (result.status) {
+      
+      res.render('user/home', { name: req.session.user })
+    }else{
+      req.session.destroy()
+      res.redirect('/login')
+    }
+  })
+
 })
-router.get('/logout',verifyLogin,(req,res)=>{
-  req.session.destroy(()=>{
+router.get('/logout', verifyLogin, (req, res) => {
+  req.session.destroy(() => {
     res.redirect('/login')
   })
 })

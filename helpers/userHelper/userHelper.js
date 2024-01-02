@@ -27,11 +27,13 @@ const login = (data) => {
     return new Promise((resolve, reject) => {
         db.get().collection('user').findOne({email : data.email}).then((result) => {
             if (result != null) {
-                bcrypt.compare(data.password, result.password).then(function (result) {
+                bcrypt.compare(data.password, result.password).then(function (res) {
                     // result == true
-                    if (result) {
+                    if (res) {
+                        console.log("hai");
                         resolve({success:true,data:{
-                            name:result.name
+                            name:result.name,
+                            email:result.email
                         }})
                     } else {
                         resolve({success:false})
@@ -45,8 +47,19 @@ const login = (data) => {
         })
     })
 }
+const checkuser=(email)=>{
+    console.log(email);
+    return new Promise(async(resolve,reject)=>{
+        const userdata= await db.get().collection('user').findOne({email:email})
+        if(userdata){
+            resolve({uservalid:true})
+        }else{
+            resolve({uservalid:false})
+        }
+    })
+}
 
 
 module.exports = {
-    signup, login
+    signup, login,checkuser
 }
